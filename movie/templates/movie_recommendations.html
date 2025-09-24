@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h1> Recomendaciones</h1>
+        <p class="lead">Describe lo que quieres ver y te recomendaremos la mejor película</p>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+        <div class="search-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="prompt" class="form-label h5"> Describe la película que estás buscando:</label>
+                    <textarea 
+                        class="form-control form-control-lg" 
+                        id="prompt" 
+                        name="prompt" 
+                        rows="3" 
+                        placeholder="Ejemplo: película de acción en el espacio, comedia romántica navideña, thriller psicológico, película de la Segunda Guerra Mundial..."
+                        required>{{ search_prompt }}</textarea>
+                </div>
+                <div class="text-center">
+                    <button>
+                        Obtener Recomendación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Error Messages -->
+{% if error %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="alert alert-danger" role="alert">
+                <strong>⚠️ Error:</strong> {{ error }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Recommended Movie Result -->
+{% if recommended_movie %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-10">
+            <div class="card recommendation-card">
+                <div class>
+                    <h3> Pelicula Recomendada</h3>
+                    <span>
+                        Similarity: {{ similarity_score }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if recommended_movie.image %}
+                                <img src="{{ recommended_movie.image.url }}" 
+                                     class="img-fluid rounded shadow" 
+                                     alt="{{ recommended_movie.title }}"
+                                     style="max-height: 300px; width: 18rem;">
+                            {% else %}
+                                <div class="bg-light p-4 rounded" style="width: 18rem; height: 300px; display: flex; align-items: center; justify-content: center;">
+                                    <div class="text-center">
+                                        <i class="bi bi-film" style="font-size: 3rem; color: #6c757d;"></i>
+                                        <p class="text-muted mt-2">No image available</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h2>{{ recommended_movie.title }}</h2>
+
+                            {% if recommended_movie.year %}
+                                <p> {{ recommended_movie.year }}</p>
+                            {% endif %}
+                            
+                            {% if recommended_movie.genre %}
+                                <p><span> {{ recommended_movie.genre }}</span></p>
+                            {% endif %}
+                            
+                            <div class="mt-3">
+                                <h5> Description:</h5>
+                                <p class="card-text">{{ recommended_movie.description }}</p>
+                            </div>
+                            
+                            {% if recommended_movie.url %}
+                                <div class="mt-4">
+                                    <a href="{{ recommended_movie.url }}" 
+                                       class="btn btn-primary" 
+                                       target="_blank">
+                                        View Movie Details
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-light">
+                    <small class="text-muted">
+                        Esta recomendación fue basada en la similitud semántica entre tu búsqueda: 
+                        "<strong>{{ search_prompt }}</strong>" y nuestras descripciones de películas.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+{% endblock content %}

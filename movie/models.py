@@ -1,4 +1,9 @@
 from django.db import models
+import numpy as np
+
+def get_default_array():
+    default_arr = np.random.rand(1536)
+    return default_arr.tobytes()
 
 # Create your models here.
 class Movie(models.Model):
